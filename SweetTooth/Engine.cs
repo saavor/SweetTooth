@@ -23,11 +23,12 @@ namespace SweetTooth
         public static Color ClearColor;
 
         // Engine Class
-        public Engine(int windowWidth, int windowHeight, bool fullscreen)
+        public Engine(string windowTitle, int windowWidth, int windowHeight, bool fullscreen)
         {
             WindowWidth = windowWidth;
             WindowHeight = windowHeight;
             Fullscreen = fullscreen;
+            Title = windowTitle;
             ClearColor = Color.Black;
 
             _graphics = new GraphicsDeviceManager(this);
@@ -43,7 +44,11 @@ namespace SweetTooth
             _graphics.SynchronizeWithVerticalRetrace = true; // VSync on
             _graphics.PreferMultiSampling = false; // Turn MSAA off
             _graphics.GraphicsProfile = GraphicsProfile.HiDef; // Set GraphicsProfile to HiDef
-            _graphics.HardwareModeSwitch = false;
+            _graphics.HardwareModeSwitch = false; // Makes fullscreen a window
+
+            // Window setup
+            Window.AllowUserResizing = true;
+            Window.Title = Title;
 
             if (Fullscreen)
             {
@@ -54,6 +59,7 @@ namespace SweetTooth
                 SetWindowed();
             }
             _graphics.ApplyChanges();
+
 
             base.Initialize();
         }
@@ -89,6 +95,7 @@ namespace SweetTooth
             _graphics.IsFullScreen = true;
             _graphics.ApplyChanges();
             Fullscreen = true;
+            Console.WriteLine("Game set to fullscreen");
         }
 
         public void SetWindowed() {
@@ -97,6 +104,7 @@ namespace SweetTooth
             _graphics.IsFullScreen = false;
             _graphics.ApplyChanges();
             Fullscreen = false;
+            Console.WriteLine("Game set to windowed");
         }
 
         public void SetBorderless() {
@@ -105,6 +113,7 @@ namespace SweetTooth
             Window.IsBorderless = true;
             _graphics.ApplyChanges();
             Fullscreen = false;
+            Console.WriteLine("Game set to borderless");
         }
 
         public void SetWindowRes(int width, int height) {
@@ -116,6 +125,10 @@ namespace SweetTooth
             {
                 SetWindowed(); // Set windowed can also be used to refresh window res
             }
+        }
+
+        public void SetWindowTitle(string windowTitle) {
+            Window.Title = windowTitle;
         }
     }
 }
