@@ -17,37 +17,20 @@ namespace SweetTooth
         public int WindowHeight;
         public int RenderWidth;
         public int RenderHeight;
+        public bool Fullscreen;
 
         // Clearing
-        public Color ClearColor = Color.Black;
+        public static Color ClearColor;
 
         // Engine Class
         public Engine(int windowWidth, int windowHeight, bool fullscreen)
         {
             WindowWidth = windowWidth;
             WindowHeight = windowHeight;
+            Fullscreen = fullscreen;
+            ClearColor = Color.Black;
 
             _graphics = new GraphicsDeviceManager(this);
-
-            _graphics.SynchronizeWithVerticalRetrace = true; // VSync on
-            _graphics.PreferMultiSampling = false; // Turn MSAA off
-            _graphics.GraphicsProfile = GraphicsProfile.HiDef; // Set GraphicsProfile to HiDef
-            _graphics.ApplyChanges();
-
-
-            if (fullscreen)
-            {
-                _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-                _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-                _graphics.IsFullScreen = true;
-            }
-            else
-            {
-                _graphics.PreferredBackBufferWidth = windowWidth;
-                _graphics.PreferredBackBufferHeight = windowHeight;
-                _graphics.IsFullScreen = false;
-            }
-            
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -55,6 +38,22 @@ namespace SweetTooth
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            // Graphics setup
+            _graphics.SynchronizeWithVerticalRetrace = true; // VSync on
+            _graphics.PreferMultiSampling = false; // Turn MSAA off
+            _graphics.GraphicsProfile = GraphicsProfile.HiDef; // Set GraphicsProfile to HiDef
+            _graphics.HardwareModeSwitch = false;
+
+            if (Fullscreen)
+            {
+                SetFullscreen();
+            }
+            else
+            {
+                SetWindowed();
+            }
+            _graphics.ApplyChanges();
 
             base.Initialize();
         }
@@ -89,6 +88,7 @@ namespace SweetTooth
             _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             _graphics.IsFullScreen = true;
             _graphics.ApplyChanges();
+            Fullscreen = true;
         }
 
         public void SetWindowed() {
@@ -96,12 +96,26 @@ namespace SweetTooth
             _graphics.PreferredBackBufferHeight = WindowHeight;
             _graphics.IsFullScreen = false;
             _graphics.ApplyChanges();
+            Fullscreen = false;
+        }
+
+        public void SetBorderless() {
+            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
+            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            Window.IsBorderless = true;
+            _graphics.ApplyChanges();
+            Fullscreen = false;
         }
 
         public void SetWindowRes(int width, int height) {
             WindowWidth = width;
             WindowHeight = height;
-            SetWindowed();
+
+            // Check if game is fullscreened (it would be bad to set the res while fullscreened)
+            if (!_graphics.IsFullScreen)
+            {
+                SetWindowed(); // Set windowed can also be used to refresh window res
+            }
         }
     }
 }
