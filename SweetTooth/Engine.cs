@@ -23,12 +23,12 @@ namespace SweetTooth
         public static Color ClearColor;
 
         // Engine Class
-        public Engine(string windowTitle, int windowWidth, int windowHeight, bool fullscreen)
+        public Engine(Config config)
         {
-            WindowWidth = windowWidth;
-            WindowHeight = windowHeight;
-            Fullscreen = fullscreen;
-            Title = windowTitle;
+            WindowWidth = config.windowWidth;
+            WindowHeight = config.windowHeight;
+            Fullscreen = config.fullscreen;
+            Title = config.windowTitle;
             ClearColor = Color.Black;
 
             _graphics = new GraphicsDeviceManager(this);
@@ -102,14 +102,16 @@ namespace SweetTooth
             _graphics.PreferredBackBufferWidth = WindowWidth;
             _graphics.PreferredBackBufferHeight = WindowHeight;
             _graphics.IsFullScreen = false;
+            Window.IsBorderless = false;
             _graphics.ApplyChanges();
             Fullscreen = false;
             Console.WriteLine("Game set to windowed");
         }
 
         public void SetBorderless() {
-            _graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            _graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            _graphics.PreferredBackBufferWidth = WindowWidth;
+            _graphics.PreferredBackBufferHeight = WindowHeight;
+            _graphics.IsFullScreen = false;
             Window.IsBorderless = true;
             _graphics.ApplyChanges();
             Fullscreen = false;
@@ -129,6 +131,10 @@ namespace SweetTooth
 
         public void SetWindowTitle(string windowTitle) {
             Window.Title = windowTitle;
+        }
+
+        public void SetWindowResizeable(bool windowResizeable) {
+            Window.AllowUserResizing = windowResizeable;
         }
     }
 }
